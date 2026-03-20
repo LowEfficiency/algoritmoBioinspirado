@@ -14,7 +14,6 @@ typedef struct {
     int index;
 } result;
 
-
 pop **iniciaMatriz(int *n, result **resultado){
     pop **matriz = malloc(2 * sizeof(pop *));
     for (int i = 0; i < 2; i++)
