@@ -20,24 +20,30 @@ void decimalBinario(float num, int bits[], int tamInt, int tamFrac){
     }   
 }
 
-int binarioDecimal(int bits[], int tamInt, int tamFra){
+float binarioDecimal(int bits[], int tamInt, int tamFra){
     float r = 0.0;
 
     for(int i = 0; i < tamInt; i++)
-        r = (r * 1) + bits[i];//desloca pra esquerda(multi por 2) e soma 
+        r = (r * 2) + bits[i];//desloca pra esquerda(multi por 2) e soma 
     
     float pesoFra = 0.5;
-    
+    for(int i = tamInt; i< (tamInt + tamFra); i++){
+        if(bits[i] == 1)
+            r += pesoFra;
+        pesoFra /= 2;
+    }
+    return r;
 }
 
 int main(){
-    int bits[8], decimal = 10;
-    decimalBinario(decimal, bits, 8);
+    int bits[24];
+    float decimal = 10.155;
+    decimalBinario(decimal,bits,8,16);
     
     for (int i = 0; i < 8; i++){
-        printf("%d ", bits[i]);
+        printf("%d", bits[i]);
     }
     
-    decimal = binarioDecimal(bits, 8);
-    printf("\n%d\n",decimal);
+    decimal = binarioDecimal(bits,8,16);
+    printf("\n%f\n",decimal);
 }
