@@ -66,6 +66,7 @@ result verificaResultado(result *r, pop **m, int *n){
     return menor;
        
 }
+
 void liberaMemoria(pop **m, result *r, int *n) {
     if (r != NULL) {
         for (int i = 0; i < *n; i++) {

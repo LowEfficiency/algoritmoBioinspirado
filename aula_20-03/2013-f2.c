@@ -76,7 +76,7 @@ int main(){
 
     pop **m = iniciaMatriz(&n, &r);
 
-
+    
     soma(r,m, &n);
     result final = verificaResultado(r,m,&n);   
 
