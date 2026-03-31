@@ -19,7 +19,6 @@ void decimalBinario(float num, int bits[], int tamInt, int tamFrac){
         }
     }   
 }
-
 float binarioDecimal(int bits[], int tamInt, int tamFra){
     float r = 0.0;
 
@@ -34,16 +33,53 @@ float binarioDecimal(int bits[], int tamInt, int tamFra){
     }
     return r;
 }
+float** alocaMatrizFloat(int n){
+    float **m = (float**)malloc(n * sizeof(float *));
+    for (size_t i = 0; i < n; i++)
+        m[i] = (float *)malloc(2 * sizeof(float));
+    return m;
+}
+int*** alocaMatrizBinaria(int n, int tamTotal){
+    int ***m = (int***)malloc(n * sizeof(int **));
+    for (size_t i = 0; i < n; i++){
+        m[i] = (int**)malloc(2 * sizeof(int*));
+        m[i][0] = (int*)malloc(tamTotal * sizeof(int));
+        m[i][1] = (int*)malloc(tamTotal * sizeof(int));
+    }
+    return m;
+}
+float* alocaVetorResultado(int n){
+    float *r = (float*)malloc(n * sizeof(float));
+    return r;
+}
+void liberarMatrizFloat(float **m, int n) {
+    for (int i = 0; i < n; i++) free(m[i]);
+    free(m);
+}
+void liberarMatrizBinaria(int ***m, int n) {
+    for (int i = 0; i < n; i++) {
+        free(m[i][0]);
+        free(m[i][1]);
+        free(m[i]);
+    }
+    free(m);
+}
+float geraFloat8_16(){
+unsigned int r24 = ((rand() << 12) ^ rand()) & 0xFFFFFF;
+return (float)r24 / 65536.0f;
+}
+void iniciaMatrizes(float **mfloat, int***mBin, int n, int tInt,int tFrac){
+    for (size_t i = 0; i < n; i++){
+        float x = geraFloat8_16();
+        mfloat[i][0] = x;
+        decimalBinario(x, mBin[i][0], tInt,tFrac);
+
+        float y = geraFloat8_16();
+        mfloat[i][1] = y;
+        decimalBinario(y, mBin[i][1], tInt,tFrac);
+    }
+}
 
 int main(){
-    int bits[24];
-    float decimal = 10.155;
-    decimalBinario(decimal,bits,8,16);
-    
-    for (int i = 0; i < 8; i++){
-        printf("%d", bits[i]);
-    }
-    
-    decimal = binarioDecimal(bits,8,16);
-    printf("\n%f\n",decimal);
+   
 }
