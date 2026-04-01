@@ -198,4 +198,7 @@ int main(){
    printf("Melhor X final: %.6f\n", r.x);
    printf("Melhor Y final: %.6f\n", r.y);
    printf("Fitness final: %.6f (Objetivo: 0.0000)\n", r.fitness);
+   liberarMatrizBinaria(mb, n);
+   liberarMatrizFloat(mf, n);
+   return 0;
 }
