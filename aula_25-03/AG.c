@@ -2,11 +2,13 @@
 #include<stdlib.h>
 #include<math.h>
 #include<time.h>
+
 typedef struct {
     float x;
     float y;
     float fitness;
 } MelhorIndividuo;
+
 void decimalBinario(float num, int bits[], int tamInt, int tamFrac){
     int inteiro = (int)num;
     float frac = num - inteiro;
@@ -25,6 +27,7 @@ void decimalBinario(float num, int bits[], int tamInt, int tamFrac){
         }
     }   
 }
+
 float binarioDecimal(int bits[], int tamInt, int tamFra){
     float r = 0.0;
 
@@ -39,12 +42,14 @@ float binarioDecimal(int bits[], int tamInt, int tamFra){
     }
     return r;
 }
+
 float** alocaMatrizFloat(int n){
     float **m = (float**)malloc(n * sizeof(float *));
     for (size_t i = 0; i < n; i++)
         m[i] = (float *)malloc(2 * sizeof(float));
     return m;
 }
+
 int*** alocaMatrizBinaria(int n, int tamTotal){
     int ***m = (int***)malloc(n * sizeof(int **));
     for (size_t i = 0; i < n; i++){
@@ -54,14 +59,17 @@ int*** alocaMatrizBinaria(int n, int tamTotal){
     }
     return m;
 }
+
 float* alocaVetorFit(int n){
     float *r = (float*)malloc(n * sizeof(float));
     return r;
 }
+
 void liberarMatrizFloat(float **m, int n) {
     for (int i = 0; i < n; i++) free(m[i]);
     free(m);
 }
+
 void liberarMatrizBinaria(int ***m, int n) {
     for (int i = 0; i < n; i++) {
         free(m[i][0]);
@@ -70,10 +78,12 @@ void liberarMatrizBinaria(int ***m, int n) {
     }
     free(m);
 }
+
 float geraFloat8_16(){
 unsigned int r24 = ((rand() << 12) ^ rand()) & 0xFFFFFF;
 return (float)r24 / 65536.0f;
 }
+
 void iniciaMatrizes(float **mfloat, int***mBin, int n, int tInt,int tFrac){
     for (size_t i = 0; i < n; i++){
         float x = geraFloat8_16();
@@ -85,6 +95,7 @@ void iniciaMatrizes(float **mfloat, int***mBin, int n, int tInt,int tFrac){
         decimalBinario(y, mBin[i][1], tInt,tFrac);
     }
 }
+
 float* calculaFit(float **mf, int n){
     float *fit = alocaVetorFit(n);
     for (size_t i = 0; i < n; i++){
@@ -95,6 +106,7 @@ float* calculaFit(float **mf, int n){
     }
     return fit;
 }
+
 int* selecao(int npop, float* fit){
     int* vpais = (int*)malloc(npop * sizeof(int));
     float pv = 0.9f;
@@ -118,6 +130,7 @@ int* selecao(int npop, float* fit){
     }
     return vpais;
 }
+
 int*** novaPop(int ***mb, int *vp, int n, int tamtotal){
     int ***npop = alocaMatrizBinaria(n, tamtotal);
     for (size_t i = 0; i < n; i+=2){
@@ -140,6 +153,7 @@ int*** novaPop(int ***mb, int *vp, int n, int tamtotal){
     }
     return npop;
 }
+
 MelhorIndividuo obterMelhor(float **mf, float *fit, int n) {
     MelhorIndividuo campeao;
     int melhorIdx = 0;
@@ -155,6 +169,7 @@ MelhorIndividuo obterMelhor(float **mf, float *fit, int n) {
 
     return campeao;
 }
+
 void mutacao(int ***mb, int n, int tamTotal, float taxaMutacao) {
     for (int i = 0; i < n; i++) {
         for (int var = 0; var < 2; var++) {
@@ -167,6 +182,7 @@ void mutacao(int ***mb, int n, int tamTotal, float taxaMutacao) {
         }
     }
 }
+
 int main(){
    srand(time(NULL));
    int n = 100, tint = 8, tfra = 16, nG = 30;
@@ -174,11 +190,22 @@ int main(){
    float** mf = alocaMatrizFloat(n);
    iniciaMatrizes(mf, mb, n, tint, tfra);
 
+    //arquivo vai ser convertido para csv
+    FILE *ptr;
+    ptr = fopen("dados.csv","w");
+    if(ptr == NULL){
+        printf("Nao foi possivel formar o arquivo");
+        return 1;
+    }
+
+    fprintf(ptr,"Geracao,Melhor_X,Melhor_Y,Fitness\n");
    for (int g = 0; g < nG; g++){//geracoes
         float *fit = calculaFit(mf, n);
         MelhorIndividuo rg = obterMelhor(mf, fit, n);
         printf("geracao %d | Melhor X: %.6f | Melhor Y: %.6f Fitness: %.6f\n", g + 1, rg.x, rg.y, rg.fitness);
         
+        fprintf(ptr,"%d,%.6f,%.6f,%.6f\n",g+1,rg.x,rg.y,rg.fitness);
+
         int *vp = selecao(n, fit);
         int ***nmb = novaPop(mb, vp, n, 24);
         
@@ -194,6 +221,8 @@ int main(){
         free(fit);
    }
    
+   fclose(ptr);
+
    float* fit = calculaFit(mf, n);
    MelhorIndividuo r = obterMelhor(mf, fit, n);
    printf("Melhor X final: %.6f\n", r.x);
